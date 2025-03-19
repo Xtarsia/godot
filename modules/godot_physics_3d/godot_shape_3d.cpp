@@ -2060,21 +2060,40 @@ void GodotHeightMapShape3D::cull(const AABB &p_local_aabb, QueryCallback p_callb
 
 	for (int z = start_z; z < end_z; z++) {
 		for (int x = start_x; x < end_x; x++) {
-			// First triangle.
-			_get_point(x, z, face.vertex[0]);
-			_get_point(x + 1, z, face.vertex[1]);
-			_get_point(x, z + 1, face.vertex[2]);
-			face.normal = Plane(face.vertex[0], face.vertex[1], face.vertex[2]).normal;
-			if (p_callback(p_userdata, &face)) {
-				return;
-			}
+			if ((x + z) % 2 == 0) {
+				// First triangle.
+				_get_point(x, z, face.vertex[0]);
+				_get_point(x + 1, z + 1, face.vertex[1]);
+				_get_point(x, z + 1, face.vertex[2]);
+				face.normal = Plane(face.vertex[0], face.vertex[1], face.vertex[2]).normal;
+				if (p_callback(p_userdata, &face)) {
+					return;
+				}
 
-			// Second triangle.
-			face.vertex[0] = face.vertex[1];
-			_get_point(x + 1, z + 1, face.vertex[1]);
-			face.normal = Plane(face.vertex[0], face.vertex[1], face.vertex[2]).normal;
-			if (p_callback(p_userdata, &face)) {
-				return;
+				// Second triangle.
+				face.vertex[2] = face.vertex[1];
+				_get_point(x + 1, z, face.vertex[1]);
+				face.normal = Plane(face.vertex[0], face.vertex[1], face.vertex[2]).normal;
+				if (p_callback(p_userdata, &face)) {
+					return;
+				}
+			} else {
+				// First triangle.
+				_get_point(x, z, face.vertex[0]);
+				_get_point(x + 1, z, face.vertex[1]);
+				_get_point(x, z + 1, face.vertex[2]);
+				face.normal = Plane(face.vertex[0], face.vertex[1], face.vertex[2]).normal;
+				if (p_callback(p_userdata, &face)) {
+					return;
+				}
+
+				// Second triangle.
+				face.vertex[0] = face.vertex[2];
+				_get_point(x + 1, z + 1, face.vertex[2]);
+				face.normal = Plane(face.vertex[0], face.vertex[1], face.vertex[2]).normal;
+				if (p_callback(p_userdata, &face)) {
+					return;
+				}
 			}
 		}
 	}
