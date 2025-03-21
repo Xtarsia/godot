@@ -149,12 +149,26 @@ JPH::ShapeRefC JoltHeightMapShape3D::_build_mesh() const {
 			const int index_upper_right = (z + 1) * width + x;
 			const int index_upper_left = (z + 1) * width + (x + 1);
 
-			if (!_is_triangle_hole(vertices, index_lower_right, index_upper_right, index_lower_left)) {
-				indices.emplace_back(index_lower_right, index_upper_right, index_lower_left);
-			}
+			if ((x + z) % 2 == 0) {
+				// First triangle.
+				if (!_is_triangle_hole(vertices, index_lower_right, index_upper_left, index_lower_left)) {
+					indices.emplace_back(index_lower_right, index_upper_left, index_lower_left);
+				}
 
-			if (!_is_triangle_hole(vertices, index_lower_left, index_upper_right, index_upper_left)) {
-				indices.emplace_back(index_lower_left, index_upper_right, index_upper_left);
+				// Second triangle.
+				if (!_is_triangle_hole(vertices, index_lower_right, index_upper_right, index_upper_left)) {
+					indices.emplace_back(index_lower_right, index_upper_right, index_upper_left);
+				}
+			} else {
+				// First triangle.
+				if (!_is_triangle_hole(vertices, index_lower_right, index_upper_right, index_lower_left)) {
+					indices.emplace_back(index_lower_right, index_upper_right, index_lower_left);
+				}
+
+				// Second triangle.
+				if (!_is_triangle_hole(vertices, index_lower_left, index_upper_right, index_upper_left)) {
+					indices.emplace_back(index_lower_left, index_upper_right, index_upper_left);
+				}
 			}
 		}
 	}
